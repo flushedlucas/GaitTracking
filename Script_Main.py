@@ -5,7 +5,7 @@ import pandas as pd
 
 # Select dataset
 Fs = 256
-filePath = '/home/lucas/Documentos/UFRPE/TCC/Código/Gait-Tracking-With-x-IMU/Gait Tracking With x-IMU/Datasets/straightLine_CalInertialAndMag.csv'
+filePath = 'Datasets/straightLine_CalInertialAndMag.csv'
 startTime = 6
 stopTime = 28
 tempo_parado = 2 #segundos parado
