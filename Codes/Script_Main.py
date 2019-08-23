@@ -3,55 +3,48 @@ from scipy import signal
 import matplotlib.pyplot as plt 
 import pandas as pd 
 
-def getFirstOcurrence(lista, busca):
-    for j, i in enumerate(lista):
-        if i == busca:
-            return j
-    return
-
 # Select dataset
 Fs = 256
-filePath = 'Datasets/spiralStairs_CalInertialAndMag.csv'
-startTime = 4
-stopTime = 47
+filePath = 'Datasets/straightLine_CalInertialAndMag.csv'
+startTime = 6
+stopTime = 28
 tempo_parado = 2 #segundos parado
 mag_enabled = False
 
 #import Data
 
 samplePeriod = 1/Fs
-dataset = pd.read_csv(filePath) 
-time = np.array(np.arange(0, 52.338, 0.0039))
-#time = dataset.iloc[:,0].values * samplePeriod
+dataset = pd.read_csv(filePath)
+time = dataset.iloc[:,0].values * samplePeriod
 gyrX = dataset.iloc[:,1].values
 gyrY = dataset.iloc[:,2].values
 gyrZ = dataset.iloc[:,3].values
 accX = dataset.iloc[:,4].values
 accY = dataset.iloc[:,5].values
 accZ = dataset.iloc[:,6].values
+magX = dataset.iloc[:,7].values
+magY = dataset.iloc[:,8].values
+magZ = dataset.iloc[:,9].values
 
 #Manually Frame Data
 # startTime = 0
 # stopTime = 10
 
-#indexSel = find(sign(time-startTime)+1, 1) : find(sign(time-stopTime)+1, 1);
-#np.sign(time-startTime)+1
-indexSel1 = np.nonzero((np.sign(time-startTime)+1) > 0)[0][0]
-indexSel2 = np.nonzero((np.sign(time-stopTime)+1) > 0)
-indexSel2 = indexSel2[0][len(indexSel2)-1]
+indexSel1 = time > startTime
+indexSel2 = time < stopTime
+indexSel = indexSel1 * indexSel2
 
-time = time[indexSel1:indexSel2]
-gyrX = gyrX[indexSel1:indexSel2]
-gyrY = gyrY[indexSel1:indexSel2]
-gyrZ = gyrZ[indexSel1:indexSel2]
-accX = accX[indexSel1:indexSel2]
-accY = accY[indexSel1:indexSel2]
-accZ = accZ[indexSel1:indexSel2]
+time = time[indexSel]
+gyrX = gyrX[indexSel]
+gyrY = gyrY[indexSel]
+gyrZ = gyrZ[indexSel]
+accX = accX[indexSel]
+accY = accY[indexSel]
+accZ = accZ[indexSel]
+magX = magX[indexSel]
+magY = magY[indexSel]
+magZ = magZ[indexSel]
 
-
-#--------------------------------------------------------------------------
-
-# FUNCIONANDO ATÉ AQUI 
 
 # -------------------------------------------------------------------------
 # Detect stationary periods
@@ -79,7 +72,7 @@ acc_magFilt = signal.filtfilt(b, a, acc_magFilt)
 # Threshold detection
 stationaty_start_time = acc_magFilt[:(tempo_parado)*Fs]
 statistical_stationary_threshold = np.mean(stationaty_start_time) + 2*np.std(stationaty_start_time)
-stationary_threshold = 0.05
+stationary_threshold = 0.048
 
 print('Limiar Calculado = %.4f + 2 * %.4f = %.4f' % (np.mean(stationaty_start_time),
                                                      np.std(stationaty_start_time),
@@ -91,7 +84,7 @@ stationary = acc_magFilt < stationary_threshold
 # Plot data raw sensor data and stationary periods
 plt.figure(figsize=(20,10))
 plt.suptitle('Sensor Data', fontsize=14)
-ax1 = plt.subplot(2,1,1)
+ax1 = plt.subplot(2+mag_enabled,1,1)
 plt.grid()
 plt.plot(time, gyrX, 'r')
 plt.plot(time, gyrY, 'g')
@@ -101,7 +94,7 @@ plt.ylabel('Angular velocity (º/s)')
 plt.legend(labels=['X', 'Y', 'Z'])
 
 
-plt.subplot(2,1,2)
+plt.subplot(2+mag_enabled,1,2,sharex=ax1)
 plt.grid()
 plt.plot(time, accX, 'r')
 plt.plot(time, accY, 'g')
@@ -111,6 +104,16 @@ plt.plot(time, stationary.astype(np.uint8)*acc_magFilt.max(), 'k', linewidth= 2)
 plt.title('Accelerometer')
 plt.ylabel('Acceleration (g)')
 plt.legend(['X', 'Y', 'Z', 'Filtered', 'Stationary'])
+
+if mag_enabled:
+    plt.subplot(3,1,3,sharex=ax1)
+    plt.grid()
+    plt.plot(time, magX, 'r')
+    plt.plot(time, magY, 'g')
+    plt.plot(time, magZ, 'b')
+    plt.title('Magnetrometer')
+    plt.ylabel('Magnetic Flux Density  (G)')
+    plt.legend(['X', 'Y', 'Z'])
 
 plt.xlabel('Time (s)')
 
@@ -280,9 +283,9 @@ posPlot = posPlot.T
 fig = plt.figure()
 ax = p3.Axes3D(fig)
 
-data_x = posPlot[0,0:]
-data_y = posPlot[1,0:]
-data_z = posPlot[2,0:]
+data_x = posPlot[0,0:1500]
+data_y = posPlot[1,0:1500]
+data_z = posPlot[2,0:1500]
 # Creating fifty line objects.
 # NOTE: Can't pass empty arrays into 3d version of plot()
 line = ax.plot(data_x, data_y, data_z)
@@ -295,9 +298,9 @@ ax.set_zlabel('Z')
 
 ax.set_title('3D Animation')
 
-ax.set_xlim3d([-5.0, 5.0])
-ax.set_ylim3d([-5.0, 5.0])
-ax.set_zlim3d([-5.0, 5.0])
+ax.set_xlim3d([-3.0, 3.0])
+ax.set_ylim3d([-3.0, 3.0])
+ax.set_zlim3d([-3.0, 3.0])
 
 #
 def update_lines(num):
