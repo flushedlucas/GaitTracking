@@ -55,7 +55,7 @@ filtCutOff = 0.001
 # FUNCIONANDO ATÉ AQUI 
 
 # [b, a] = np.around(signal.butter(1, (2*filtCutOff)/(1/samplePeriod), 'high'), decimals=4) #Erro de Matriz singular 
-# [b, a] = signal.butter(1, (2*filtCutOff)/(1/samplePeriod), 'high')
+[b, a] = signal.butter(1, (2*filtCutOff)/(1/samplePeriod), 'high', output='ba')
 
 acc_magFilt = signal.filtfilt(b, a, acc_mag)
 
@@ -78,7 +78,7 @@ stationary_threshold = 0.05
 stationary = acc_magFilt < stationary_threshold
 # -------------------------------------------------------------------------
 # Plot data raw sensor data and stationary periods
-plt.figure(figsize=(20,10))
+"""plt.figure(figsize=(20,10))
 plt.suptitle('Sensor Data', fontsize=14)
 ax1 = plt.subplot(2,1,1)
 plt.grid()
@@ -101,19 +101,23 @@ plt.title('Accelerometer')
 plt.ylabel('Acceleration (g)')
 plt.legend(['X', 'Y', 'Z', 'Filtered', 'Stationary'])
 
-plt.xlabel('Time (s)')
+plt.xlabel('Time (s)')"""
 
 
 # -------------------------------------------------------------------------
 # Compute orientation
 from madgwickahrs import MadgwickAHRS
 
-quat = [None] * len(time)
+quat = [[0]*4]*len(time)
 AHRSalgorithm = MadgwickAHRS(sampleperiod=1/Fs)
 
 # Initial convergence
 initPeriod = tempo_parado # usually 2 seconds
-indexSel = time < (tempo_parado+time[0])
+
+# indexSel = 1 : find(sign(time-(time(1)+initPeriod))+1, 1);
+np.nonzero((np.sign(time-startTime)+1) > 0)[0][0]
+indexSel = np.arange(0, np.nonzero(np.sign(time-(time[0]+initPeriod))+1)[0][0], 1)
+
 for i in range(2000):
     AHRSalgorithm.update_imu([0, 0, 0],
                          [accX[indexSel].mean(), accY[indexSel].mean(), accZ[indexSel].mean()])
@@ -164,7 +168,7 @@ plt.legend(('X', 'Y', 'Z'))
 
 
 
-# -------------------------------------------------------------------------
+"""# -------------------------------------------------------------------------
 # Compute translational velocities
 
 acc[:,2] = acc[:,2] - 9.81
@@ -302,4 +306,4 @@ line_ani = animation.FuncAnimation(fig=fig, func=update_lines,
                                    fargs=None,
                                    interval=50, blit=False)
 
-plt.show()
+plt.show()"""
