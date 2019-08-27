@@ -3,12 +3,6 @@ from scipy import signal
 import matplotlib.pyplot as plt 
 import pandas as pd 
 
-def getFirstOcurrence(lista, busca):
-    for j, i in enumerate(lista):
-        if i == busca:
-            return j
-    return
-
 # Select dataset
 Fs = 256
 filePath = 'Datasets/spiralStairs_CalInertialAndMag.csv'
@@ -19,9 +13,9 @@ mag_enabled = False
 
 #import Data
 
-samplePeriod = 1/Fs
+samplePeriod = np.around(1/Fs, decimals=4)
 dataset = pd.read_csv(filePath) 
-time = np.array(np.arange(0, 52.338, 0.0039))
+time = np.array(np.arange(0, 52.338, samplePeriod))
 #time = dataset.iloc[:,0].values * samplePeriod
 gyrX = dataset.iloc[:,1].values
 gyrY = dataset.iloc[:,2].values
@@ -48,20 +42,21 @@ accX = accX[indexSel1:indexSel2]
 accY = accY[indexSel1:indexSel2]
 accZ = accZ[indexSel1:indexSel2]
 
-
-#--------------------------------------------------------------------------
-
-# FUNCIONANDO ATÉ AQUI 
-
 # -------------------------------------------------------------------------
 # Detect stationary periods
 
 # Compute accelerometer magnitude
-acc_mag = np.sqrt(accX**2 + accY**2 + accZ**2)
+acc_mag = np.around(np.sqrt(accX**2 + accY**2 + accZ**2), decimals=4)
 
 # HP filter accelerometer data
 filtCutOff = 0.001
-[b, a] = signal.butter(1, (2*filtCutOff)/(1/samplePeriod), 'high')
+
+#--------------------------------------------------------------------------
+# FUNCIONANDO ATÉ AQUI 
+
+# [b, a] = np.around(signal.butter(1, (2*filtCutOff)/(1/samplePeriod), 'high'), decimals=4) #Erro de Matriz singular 
+# [b, a] = signal.butter(1, (2*filtCutOff)/(1/samplePeriod), 'high')
+
 acc_magFilt = signal.filtfilt(b, a, acc_mag)
 
 # Compute absolute value
@@ -69,6 +64,7 @@ acc_magFilt = abs(acc_magFilt)
 
 # LP filter accelerometer data
 filtCutOff = 5
+
 [b, a] = signal.butter(1, (2*filtCutOff)/(1/samplePeriod), 'low')
 acc_magFilt = signal.filtfilt(b, a, acc_magFilt)
 
@@ -77,14 +73,7 @@ acc_magFilt = signal.filtfilt(b, a, acc_magFilt)
 # plt.plot(time[:(tempo_parado)*Fs], acc_magFilt[:(tempo_parado)*Fs])
 
 # Threshold detection
-stationaty_start_time = acc_magFilt[:(tempo_parado)*Fs]
-statistical_stationary_threshold = np.mean(stationaty_start_time) + 2*np.std(stationaty_start_time)
 stationary_threshold = 0.05
-
-print('Limiar Calculado = %.4f + 2 * %.4f = %.4f' % (np.mean(stationaty_start_time),
-                                                     np.std(stationaty_start_time),
-                                                     statistical_stationary_threshold))
-print('Limiar fixo = %.4f' % (stationary_threshold*2))
 
 stationary = acc_magFilt < stationary_threshold
 # -------------------------------------------------------------------------
