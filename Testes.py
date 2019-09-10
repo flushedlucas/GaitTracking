@@ -55,10 +55,11 @@ filtCutOff = 0.001
 # FUNCIONANDO ATÉ AQUI 
 
 # [b, a] = np.around(signal.butter(1, (2*filtCutOff)/(1/samplePeriod), 'high'), decimals=4) #Erro de Matriz singular 
-freq = np.double((filtCutOff)/((1/samplePeriod)/2))
-[b, a] = signal.butter(1, 7.8125e-06, 'high', output='ba')
+freq = np.double((filtCutOff)/((1/samplePeriod)))
+[b, a] = signal.butter(1, (filtCutOff)/(1/samplePeriod), btype='high')
 
-acc_magFilt = signal.filtfilt(b, a, acc_mag)
+acc_magFilt = signal.filtfilt(b, a, acc_mag, padlen=3*(max(len(b)-1, len(a)-1)))
+acc_magFilt = acc_magFilt - 0.02
 
 # Compute absolute value
 acc_magFilt = abs(acc_magFilt)
@@ -66,7 +67,7 @@ acc_magFilt = abs(acc_magFilt)
 # LP filter accelerometer data
 filtCutOff = 5
 
-[b, a] = signal.butter(1, (2*filtCutOff)/(1/samplePeriod), 'low')
+[b, a] = signal.butter(1, (filtCutOff)/(1/samplePeriod), 'low')
 acc_magFilt = signal.filtfilt(b, a, acc_magFilt)
 
 # Descomente para ver a relação de tempo de espera para calibracao
@@ -77,6 +78,7 @@ acc_magFilt = signal.filtfilt(b, a, acc_magFilt)
 stationary_threshold = 0.05
 
 stationary = acc_magFilt < stationary_threshold
+testes = stationary[600:620]
 # -------------------------------------------------------------------------
 # Plot data raw sensor data and stationary periods
 """plt.figure(figsize=(20,10))
@@ -117,11 +119,11 @@ initPeriod = tempo_parado # usually 2 seconds
 
 # indexSel = 1 : find(sign(time-(time(1)+initPeriod))+1, 1);
 np.nonzero((np.sign(time-startTime)+1) > 0)[0][0]
-indexSel = np.arange(0, np.nonzero(np.sign(time-(time[0]+initPeriod))+1)[0][0], 1)
+indexSel = np.arange(0, np.nonzero(np.sign(time-(time[0]+initPeriod))+1)[0][0] -1, 1)
 
 for i in range(1, 2000):
-    AHRSalgorithm.update_imu([0, 0, 0],
-                         [accX[indexSel].mean(), accY[indexSel].mean(), accZ[indexSel].mean()])
+    AHRSalgorithm.update_imu([0, 0, 0], 
+                            [np.around(accX[indexSel].mean(), decimals=4), np.around(accY[indexSel].mean(), decimals=4), np.around(accZ[indexSel].mean(), decimals=4)])
 
 # For all data
 for t in range(len(time)):
@@ -168,7 +170,7 @@ plt.legend(('X', 'Y', 'Z'))
 
 
 
-"""# -------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 # Compute translational velocities
 
 acc[:,2] = acc[:,2] - 9.81
@@ -306,4 +308,4 @@ line_ani = animation.FuncAnimation(fig=fig, func=update_lines,
                                    fargs=None,
                                    interval=50, blit=False)
 
-plt.show()"""
+plt.show()
