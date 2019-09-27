@@ -17,12 +17,15 @@ import warnings
 import numpy as np
 from numpy.linalg import norm
 from quaternion import Quaternion
+import quaternion_toolbox as qt
 
 
 class MadgwickAHRS:
     samplePeriod = 1/256
     quaternion = Quaternion(1, 0, 0, 0)
     beta = 1
+    IntError = np.array([0, 0, 0]).transpose()
+    q = Quaternion(1, 0, 0, 0)
 
     def __init__(self, sampleperiod=None, quaternion=None, beta=None):
         """
@@ -132,3 +135,34 @@ class MadgwickAHRS:
         # Integrate to yield quaternion
         q += qdot * self.samplePeriod
         self.quaternion = Quaternion(q / norm(q))  # normalise quaternion
+
+    def update_imu_new(self, gyroscope, accelerometer):
+
+        #gyroscope = np.array(gyroscope, dtype=float).flatten()
+        #accelerometer = np.array(accelerometer, dtype=float).flatten()
+
+        # Normalise accelerometer measurement
+        if norm(accelerometer) is 0:
+            warnings.warn("accelerometer is zero")
+            return
+        accelerometer /= norm(accelerometer)
+
+        v = [2*(self.q[1]*self.q[3] - self.q[0]*self.q[2]),
+            2*(self.q[0]*self.q[1] + self.q[2]*self.q[3]),
+            self.q[0]**2 - self.q[1]**2 - self.q[2]**2 + self.q[3]**2]
+
+        error = np.cross(v, accelerometer.transpose())
+
+        # obj.IntError = obj.IntError + error;
+        self.IntError = self.IntError + error
+        
+        # Apply feedback terms
+        ref = gyroscope - (self.beta*error).transpose() # Ref = Gyroscope - (obj.Kp*error + obj.Ki*obj.IntError)';
+
+        # Compute rate of change of quaternion
+        pDot = Quaternion.__mul__(Quaternion.__mul__(self.q, Quaternion([0, ref[0], ref[1], ref[2]])), 0.5) # Compute rate of change of quaternion
+        self.q = self.q + pDot * self.samplePeriod    # Integrate rate of change of quaternion
+        self.q = Quaternion(self.q / norm(self.q)) # Normalise quaternion
+
+        # Store conjugate
+        self.quaternion = Quaternion.conj(self.q)

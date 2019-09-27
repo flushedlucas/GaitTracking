@@ -51,9 +51,6 @@ acc_mag = np.around(np.sqrt(accX**2 + accY**2 + accZ**2), decimals=4)
 # HP filter accelerometer data
 filtCutOff = 0.001
 
-#--------------------------------------------------------------------------
-# FUNCIONANDO ATÉ AQUI 
-
 # [b, a] = np.around(signal.butter(1, (2*filtCutOff)/(1/samplePeriod), 'high'), decimals=4) #Erro de Matriz singular 
 freq = np.double((filtCutOff)/((1/samplePeriod)))
 [b, a] = signal.butter(1, (filtCutOff)/(1/samplePeriod), btype='high')
@@ -78,7 +75,6 @@ acc_magFilt = signal.filtfilt(b, a, acc_magFilt)
 stationary_threshold = 0.05
 
 stationary = acc_magFilt < stationary_threshold
-testes = stationary[600:620]
 # -------------------------------------------------------------------------
 # Plot data raw sensor data and stationary periods
 """plt.figure(figsize=(20,10))
@@ -122,7 +118,7 @@ np.nonzero((np.sign(time-startTime)+1) > 0)[0][0]
 indexSel = np.arange(0, np.nonzero(np.sign(time-(time[0]+initPeriod))+1)[0][0] -1, 1)
 
 for i in range(1, 2000):
-    AHRSalgorithm.update_imu([0, 0, 0], 
+    AHRSalgorithm.update_imu_new([0, 0, 0], 
                             [np.around(accX[indexSel].mean(), decimals=4), np.around(accY[indexSel].mean(), decimals=4), np.around(accZ[indexSel].mean(), decimals=4)])
 
 # For all data
@@ -132,9 +128,9 @@ for t in range(len(time)):
     else:
         AHRSalgorithm.beta = 0
         
-    AHRSalgorithm.update_imu(
-            np.deg2rad([gyrX[t], gyrY[t], gyrZ[t]]),
-            [accX[t], accY[t], accZ[t]])
+    AHRSalgorithm.update_imu_new(
+            np.deg2rad([np.around(gyrX[t], decimals=4), np.around(gyrY[t], decimals=4), np.around(gyrZ[t], decimals=4)]),
+            [np.around(accX[t], decimals=4), np.around(accY[t], decimals=4), np.around(accZ[t], decimals=4)])
     quat[t] = AHRSalgorithm.quaternion
 
 quats = []
@@ -146,7 +142,7 @@ quat = quats
 # Compute translational accelerations
 import quaternion_toolbox
 # Rotate body accelerations to Earth frame
-a = np.array([accX, accY, accZ]).T
+a = np.array([accX, accY, accZ]).transpose()
 acc = quaternion_toolbox.rotate(a, quaternion_toolbox.conjugate(quat))
 
 # # Remove gravity from measurements
@@ -170,6 +166,9 @@ plt.legend(('X', 'Y', 'Z'))
 
 
 
+#--------------------------------------------------------------------------
+# FUNCIONANDO ATÉ AQUI 
+
 # -------------------------------------------------------------------------
 # Compute translational velocities
 
@@ -184,7 +183,7 @@ for t in range(1,len(vel)):
   
 
 # Compute integral drift during non-stationary periods
-
+print(vel[609:650])
 velDrift = np.zeros(np.shape(vel))
 
 d = np.append(arr = [0], values = np.diff(stationary.astype(np.int8)))
