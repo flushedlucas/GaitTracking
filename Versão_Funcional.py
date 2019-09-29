@@ -8,19 +8,36 @@ from scipy import signal
 import pandas as pd
 
 # Select dataset
-Fs = 256
 
-filePath = 'Datasets/straightLine_CalInertialAndMag.csv'
-startTime = 6
-stopTime = 26
+# Fs = 100
+# filePath = 'Datasets/coleta1_CalInertialAndMag.csv'
+# startTime = 8
+# stopTime = 37.5
 
+#Fs = 100
+# filePath = 'Datasets/coleta2_CalInertialAndMag.csv'
+# startTime = 8
+# stopTime = 35
+
+# Fs = 100
+#filePath = 'Datasets/coleta3_CalInertialAndMag.csv'
+#startTime = 8
+#stopTime = 55
+
+# Fs = 256
+# filePath = 'Datasets/straightLine_CalInertialAndMag.csv'
+# startTime = 6
+# stopTime = 26
+
+# Fs = 256
 # filePath = 'Datasets/stairsAndCorridor_CalInertialAndMag.csv'
 # startTime = 5
 # stopTime = 53
 
-# filePath = 'Datasets/spiralStairs_CalInertialAndMag.csv'
-# startTime = 4
-# stopTime = 47
+Fs = 256
+filePath = 'Datasets/spiralStairs_CalInertialAndMag.csv'
+startTime = 4
+stopTime = 47
 
 tempo_parado = 2  # segundos parado
 mag_enabled = False
