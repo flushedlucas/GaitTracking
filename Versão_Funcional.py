@@ -14,11 +14,6 @@ import pandas as pd
 # startTime = 8
 # stopTime = 37.5
 
-#Fs = 100
-# filePath = 'Datasets/coleta2_CalInertialAndMag.csv'
-# startTime = 8
-# stopTime = 35
-
 # Fs = 100
 #filePath = 'Datasets/coleta3_CalInertialAndMag.csv'
 #startTime = 8
@@ -45,9 +40,9 @@ mag_enabled = False
 #import Data
 
 samplePeriod = np.around(1/Fs, decimals=4)
+
 dataset = pd.read_csv(filePath)
 time = np.array(np.arange(0, len(dataset.iloc[:,0].values), samplePeriod))
-#time = dataset.iloc[:,0].values * samplePeriod
 gyrX = dataset.iloc[:, 1].values
 gyrY = dataset.iloc[:, 2].values
 gyrZ = dataset.iloc[:, 3].values
@@ -61,6 +56,8 @@ accZ = dataset.iloc[:, 6].values
 
 # indexSel = find(sign(time-startTime)+1, 1) : find(sign(time-stopTime)+1, 1);
 # np.sign(time-startTime)+1
+
+
 indexSel1 = np.nonzero((np.sign(time-startTime)+1) > 0)[0][0]
 indexSel2 = np.nonzero((np.sign(time-stopTime)+1) > 0)
 if (len(indexSel2) > 1):
@@ -88,7 +85,7 @@ filtCutOff = 0.001
 
 # [b, a] = np.around(signal.butter(1, (2*filtCutOff)/(1/samplePeriod), 'high'), decimals=4) #Erro de Matriz singular
 freq = np.double((filtCutOff)/((1/samplePeriod)/2))
-[b, a] = signal.butter(1, 7.8125e-06, 'high', output='ba')
+[b, a] = signal.butter(1, (2*filtCutOff)/(1/samplePeriod), 'high', output='ba')
 
 acc_magFilt = signal.filtfilt(b, a, acc_mag)
 
@@ -222,8 +219,7 @@ stationaryStart = np.array(stationaryStart)[0]
 stationaryEnd = np.array(stationaryEnd)[0]
 
 for i in range(len(stationaryEnd)):
-    driftRate = vel[stationaryEnd[i]-1, :] / \
-        (stationaryEnd[i] - stationaryStart[i])
+    driftRate = vel[stationaryEnd[i]-1, :] / (stationaryEnd[i] - stationaryStart[i])
     enum = np.arange(0, stationaryEnd[i] - stationaryStart[i])
     enum_t = enum.reshape((1, len(enum)))
     driftRate_t = driftRate.reshape((1, len(driftRate)))

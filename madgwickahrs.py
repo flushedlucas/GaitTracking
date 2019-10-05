@@ -102,8 +102,10 @@ class MadgwickAHRS:
         :param gyroscope: A three-element array containing the gyroscope data in radians per second.
         :param accelerometer: A three-element array containing the accelerometer data. Can be any unit since a normalized value is used.
         """
-        #gyroscope = np.array(gyroscope, dtype=float).flatten()
-        #accelerometer = np.array(accelerometer, dtype=float).flatten()
+        q = self.quaternion
+
+        gyroscope = np.array(gyroscope, dtype=float).flatten()
+        accelerometer = np.array(accelerometer, dtype=float).flatten()
 
         # Normalise accelerometer measurement
         if norm(accelerometer) is 0:
@@ -113,29 +115,26 @@ class MadgwickAHRS:
 
         # Gradient descent algorithm corrective step
         f = np.array([
-            2*(self.q[1]*self.q[3] - self.q[0]*self.q[2]) - accelerometer[0],
-            2*(self.q[0]*self.q[1] + self.q[2]*self.q[3]) - accelerometer[1],
-            2*(0.5 - self.q[1]**2 - self.q[2]**2) - accelerometer[2]
+            2*(q[1]*q[3] - q[0]*q[2]) - accelerometer[0],
+            2*(q[0]*q[1] + q[2]*q[3]) - accelerometer[1],
+            2*(0.5 - q[1]**2 - q[2]**2) - accelerometer[2]
         ])
         j = np.array([
-            [-2*self.q[2], 2*self.q[3], -2*self.q[0], 2*self.q[1]],
-            [2*self.q[1], 2*self.q[0], 2*self.q[3], 2*self.q[2]],
-            [0, -4*self.q[1], -4*self.q[2], 0]
+            [-2*q[2], 2*q[3], -2*q[0], 2*q[1]],
+            [2*q[1], 2*q[0], 2*q[3], 2*q[2]],
+            [0, -4*q[1], -4*q[2], 0]
         ])
         step = j.T.dot(f)
         step /= norm(step)  # normalise step magnitude
 
         # Compute rate of change of quaternion
-        qdot = (self.q * Quaternion(0, gyroscope[0], gyroscope[1], gyroscope[2])) * 0.5 - self.beta * step.T
+        qdot = (q * Quaternion(0, gyroscope[0], gyroscope[1], gyroscope[2])) * 0.5 - self.beta * step.T
 
         # Integrate to yield quaternion
-        self.q += qdot * self.samplePeriod
-        self.quaternion = Quaternion(self.q / norm(self.q))  # normalise quaternion
+        q += qdot * self.samplePeriod
+        self.quaternion = Quaternion(q / norm(q))  # normalise quaternion
 
     def update_imu_new(self, gyroscope, accelerometer):
-
-        #gyroscope = np.array(gyroscope, dtype=float).flatten()
-        #accelerometer = np.array(accelerometer, dtype=float).flatten()
 
         # Normalise accelerometer measurement
         if norm(accelerometer) is 0:
@@ -149,7 +148,6 @@ class MadgwickAHRS:
 
         error = np.cross(v, accelerometer.transpose())
 
-        # obj.IntError = obj.IntError + error;
         self.IntError = self.IntError + error
         
         # Apply feedback terms
