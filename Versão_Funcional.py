@@ -29,10 +29,30 @@ import pandas as pd
 # startTime = 5
 # stopTime = 53
 
-Fs = 256
-filePath = 'Datasets/spiralStairs_CalInertialAndMag.csv'
-startTime = 4
-stopTime = 47
+# Fs = 256
+# filePath = 'Datasets/spiralStairs_CalInertialAndMag.csv'
+# startTime = 4
+# stopTime = 47
+
+# Fs = 250
+# filePath = 'Datasets/mpu-data_15.11.19_081525_SUBIDA_Tratado.csv'
+# startTime = 1
+# stopTime = 60
+
+Fs = 250
+filePath = 'Datasets/mpu-data_15.11.19_081525_SUBIDA_G_Tratado.csv'
+startTime = 1
+stopTime = 60
+
+# Fs = 250
+# filePath = 'Datasets/mpu-data_15.11.19_081525_DESCIDA_Tratado.csv'
+# startTime = 1
+# stopTime = 60
+
+# Fs = 250
+# filePath = 'Datasets/mpu-data_15.11.19_081525_CORRIDA_CURTA_Tratado.csv'
+# startTime = 4
+# stopTime = 60
 
 tempo_parado = 2  # segundos parado
 mag_enabled = False
@@ -179,7 +199,7 @@ acc = quaternion_toolbox.rotate(a, quaternion_toolbox.conjugate(quat))
 # acc = acc - [zeros(length(time), 2) ones(length(time), 1)]     # unnecessary due to velocity integral drift compensation
 
 # Convert acceleration measurements to m/s/s
-acc = acc * 9.81
+acc = acc * 9.81 # Conversão de G para m/s² - Verificar qual a unidade de medida de retorno do Acelerômetro usado.
 
 # Plot translational accelerations
 plt.figure(figsize=(20, 10))
@@ -309,9 +329,9 @@ ax.set_zlabel('Z')
 
 ax.set_title('3D Animation')
 
-ax.set_xlim3d([-5.0, 5.0])
-ax.set_ylim3d([-5.0, 5.0])
-ax.set_zlim3d([-5.0, 5.0])
+ax.set_xlim3d([-10.0, 10.0])
+ax.set_ylim3d([-10.0, 10.0])
+ax.set_zlim3d([-10.0, 10.0])
 
 
 def update_lines(num):
