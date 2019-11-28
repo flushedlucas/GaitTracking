@@ -14,10 +14,10 @@ import pandas as pd
 # startTime = 8
 # stopTime = 37.5
 
-# Fs = 100
-#filePath = 'Datasets/coleta3_CalInertialAndMag.csv'
-#startTime = 8
-#stopTime = 55
+Fs = 100
+filePath = 'Datasets/ensaio_01.csv'
+startTime = 2
+stopTime = 55
 
 # Fs = 256
 # filePath = 'Datasets/straightLine_CalInertialAndMag.csv'
@@ -39,10 +39,10 @@ import pandas as pd
 # startTime = 1
 # stopTime = 60
 
-Fs = 250
-filePath = 'Datasets/mpu-data_15.11.19_081525_SUBIDA_G_Tratado.csv'
-startTime = 1
-stopTime = 60
+# Fs = 30
+# filePath = 'Datasets/mpu-data_15.11.19_081525_SUBIDA_G_Tratado.csv'
+# startTime = 1
+# stopTime = 60
 
 # Fs = 250
 # filePath = 'Datasets/mpu-data_15.11.19_081525_DESCIDA_Tratado.csv'
