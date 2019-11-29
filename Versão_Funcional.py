@@ -15,9 +15,9 @@ import pandas as pd
 # stopTime = 37.5
 
 Fs = 100
-filePath = 'Datasets/ensaio_01.csv'
-startTime = 2
-stopTime = 55
+filePath = 'Datasets/ensaio_30.csv'
+startTime = 1
+stopTime = 50
 
 # Fs = 256
 # filePath = 'Datasets/straightLine_CalInertialAndMag.csv'
