@@ -32,7 +32,7 @@ for name in filenames:
     accZ_copy = []
 
     for i, j in enumerate(packet):
-        if i % 4 == 0:
+        if i % 2 == 0:
             packet_copy.append(packet[j])
             gyrX_copy.append(gyrX[j])
             gyrY_copy.append(gyrY[j])
@@ -41,7 +41,8 @@ for name in filenames:
             accY_copy.append(accY[j])
             accZ_copy.append(accZ[j]) 
 
-    with open('Datasets/'+name+'_25hz.csv', 'w', newline='') as csvfile:
+    with open('Datasets/'+name+'_50hz.csv', 'w', newline='') as csvfile:
         spamwriter = csv.writer(csvfile, delimiter=',')
+        spamwriter.writerow(['Packet number','Gyroscope X (deg/s)','Gyroscope Y (deg/s)','Gyroscope Z (deg/s)','Accelerometer X (g)','Accelerometer Y (g)','Accelerometer Z (g)'])
         for j, i in enumerate(packet_copy):
             spamwriter.writerow([packet_copy[j], gyrX_copy[j], gyrY_copy[j], gyrZ_copy[j], accX_copy[j], accY_copy[j], accZ_copy[j]])

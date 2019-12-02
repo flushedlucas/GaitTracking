@@ -15,9 +15,9 @@ import pandas as pd
 # stopTime = 37.5
 
 Fs = 100
-filePath = 'Datasets/ensaio_30.csv'
+filePath = 'Datasets/ensaio_25.csv'
 startTime = 1
-stopTime = 50
+stopTime = 20
 
 # Fs = 256
 # filePath = 'Datasets/straightLine_CalInertialAndMag.csv'
@@ -123,7 +123,7 @@ acc_magFilt = signal.filtfilt(b, a, acc_magFilt)
 # plt.plot(time[:(tempo_parado)*Fs], acc_magFilt[:(tempo_parado)*Fs])
 
 # Threshold detection
-stationary_threshold = 0.05
+stationary_threshold = 0.091
 
 stationary = acc_magFilt < stationary_threshold
 # -------------------------------------------------------------------------

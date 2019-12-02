@@ -1,3 +1,4 @@
+Packet number,Gyroscope X (deg/s),Gyroscope Y (deg/s),Gyroscope Z (deg/s),Accelerometer X (g),Accelerometer Y (g),Accelerometer Z (g)
 0,0.671397,0.549325,0.061036,0.000732,0.008667,1.00209
 2,0.793469,-0.122072,0.0,0.0008550000000000001,0.010376,1.003067
 4,0.366217,-0.30518,0.0,-0.0035399999999999997,0.009766,0.992691
