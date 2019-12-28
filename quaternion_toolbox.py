@@ -45,15 +45,15 @@ def toEuler(quat):
 #------------------------------------------------------------------------------
 def toRotMat(quat):
 	R = np.zeros((3,3))
-	R[0,0] = 2. * np.power(quat[0],2)-1 + 2 * np.power(quat[1],2);
-	R[0,1] = 2. * (quat[1]*quat[2]+quat[0]*quat[3]);
-	R[0,2] = 2. * (quat[1]*quat[3]-quat[0]*quat[2]);
-	R[1,0] = 2. * (quat[1]*quat[2]-quat[0]*quat[3]);
-	R[1,1] = 2. * np.power(quat[0],2)-1 + 2*np.power(quat[2],2);
-	R[1,2] = 2. * (quat[2]*quat[3]+quat[0]*quat[1]);
-	R[2,0] = 2. * (quat[1]*quat[3]+quat[0]*quat[2]);
-	R[2,1] = 2. * (quat[2]*quat[3]-quat[0]*quat[1]);
-	R[2,2] = 2. * np.power(quat[0],2)-1 + 2*np.power(quat[3],2);
+	R[0,0] = 2. * np.power(quat[0],2)-1 + 2 * np.power(quat[1],2)
+	R[0,1] = 2. * (quat[1]*quat[2]+quat[0]*quat[3])
+	R[0,2] = 2. * (quat[1]*quat[3]-quat[0]*quat[2])
+	R[1,0] = 2. * (quat[1]*quat[2]-quat[0]*quat[3])
+	R[1,1] = 2. * np.power(quat[0],2)-1 + 2*np.power(quat[2],2)
+	R[1,2] = 2. * (quat[2]*quat[3]+quat[0]*quat[1])
+	R[2,0] = 2. * (quat[1]*quat[3]+quat[0]*quat[2])
+	R[2,1] = 2. * (quat[2]*quat[3]-quat[0]*quat[1])
+	R[2,2] = 2. * np.power(quat[0],2)-1 + 2*np.power(quat[3],2)
 	return R
 #------------------------------------------------------------------------------
 def toGravity(quat):

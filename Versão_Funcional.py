@@ -14,20 +14,20 @@ import pandas as pd
 # startTime = 8
 # stopTime = 37.5
 
-Fs = 100
-filePath = 'Datasets/ensaio_25.csv'
-startTime = 1
-stopTime = 20
+# Fs = 50
+# filePath = 'Datasets/ensaio_30_50hz.csv'
+# startTime = 1
+# stopTime = 25
 
 # Fs = 256
 # filePath = 'Datasets/straightLine_CalInertialAndMag.csv'
 # startTime = 6
 # stopTime = 26
 
-# Fs = 256
-# filePath = 'Datasets/stairsAndCorridor_CalInertialAndMag.csv'
-# startTime = 5
-# stopTime = 53
+Fs = 256
+filePath = 'Datasets/stairsAndCorridor_CalInertialAndMag.csv'
+startTime = 5
+stopTime = 53
 
 # Fs = 256
 # filePath = 'Datasets/spiralStairs_CalInertialAndMag.csv'
@@ -123,7 +123,7 @@ acc_magFilt = signal.filtfilt(b, a, acc_magFilt)
 # plt.plot(time[:(tempo_parado)*Fs], acc_magFilt[:(tempo_parado)*Fs])
 
 # Threshold detection
-stationary_threshold = 0.091
+stationary_threshold = 0.05
 
 stationary = acc_magFilt < stationary_threshold
 # -------------------------------------------------------------------------
